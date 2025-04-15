@@ -1,66 +1,173 @@
-<!-- views/user/register.ejs -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Registration</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.3); /* Slightly more opaque background */
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); /* Softer shadow */
+      backdrop-filter: blur(12px); /* Slightly adjusted blur */
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 12px; /* Slightly less rounded corners */
+      width: 100%;
+      max-width: 480px; /* Slightly wider card */
+      padding: 35px; /* Slightly more padding */
+      color: #444; /* Darker text color */
+      animation: fadeIn 1s ease;
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 30px; /* More space below the title */
+      font-weight: 700; /* Bolder title */
+      color: #2c3e50; /* Darker title color */
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px; /* More spacing between form elements */
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #555; /* Slightly darker label */
+    }
+
+    input, select {
+      padding: 11px 16px; /* Slightly more padding inside input fields */
+      border: 1px solid #ddd; /* Lighter border */
+      border-radius: 6px; /* Slightly less rounded input fields */
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3498db; /* Different focus color */
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2); /* Matching focus shadow */
+    }
+
+    button {
+      background-color: #3498db; /* Different button color */
+      color: #fff;
+      padding: 14px; /* More padding for the button */
+      font-size: 1.05rem; /* Slightly larger font for the button */
+      border: none;
+      border-radius: 6px; /* Matching button border radius */
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9; /* Darker hover color */
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 20px; /* More space above the footer text */
+      color: #777; /* Slightly lighter footer text */
+    }
+
+    .footer-text a {
+      color: #3498db; /* Matching link color */
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .footer-text a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 550px) {
+      .card {
+        padding: 25px;
+      }
+
+      input, select, button {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header text-center">
-                        <h2>User Registration</h2>
-                    </div>
-                    <div class="card-body">
-                        <form action="/user/register" method="POST">
-                            <div class="form-group">
-                                <label for="name">Name:</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="email">Email:</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="password">Password:</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="city">City:</label>
-                                <input type="text" class="form-control" id="city" name="city" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">Phone:</label>
-                                <input type="number" class="form-control" id="phone" name="phone" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="gender">Gender:</label>
-                                <select class="form-control" id="gender" name="gender" required>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Register</button>
-                        </form>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a href="/user/userLogin">Already have an account?</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <div class="card">
+    <h2>Create Account</h2>
+    <form action="/user/register" method="POST">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a strong password" required />
+      </div>
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" id="city" name="city" placeholder="Your current city" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="number" id="phone" name="phone" placeholder="Enter your phone number" required />
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender" required>
+          <option value="">Select your gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <button type="submit">Register</button>
+    </form>
+    <div class="footer-text">
+      Already have an account? <a href="/user/userLogin">Sign in</a>
+    </div>
+  </div>
+
 </body>
 </html>

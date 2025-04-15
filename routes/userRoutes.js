@@ -14,6 +14,8 @@ router.get('/userLogin', (req, res) => {
     res.render('user/login');
 });
 router.post('/userLogin', userController.login);
+router.get("/verify-otp", userController.verifyOtpPage);
+router.post("/verify-otp", userController.verifyOtp);
 
 router.get('/index', authenticateToken, userController.getBooksByPopular);
 

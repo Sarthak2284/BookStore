@@ -2,6 +2,7 @@ const User = require("../models/user");
 const { hashSync, genSaltSync, compareSync } = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config/config");
+const sendOTP = require("../utils/sendOtp");
 
 const userController = {
   // register
@@ -24,22 +25,59 @@ const userController = {
   login: async function (req, res) {
     const { email, password } = req.body;
     try {
-        const user = await User.findByEmail(email);
-        if (!user) return res.status(404).json({ error: "User not found" });
-
-        // Correct password verification
-        if (compareSync(password, user.password)) {
-            const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-            res.cookie("token", token, { httpOnly: true });
-            return res.redirect("/user/index");
-        } else {
-            return res.status(401).json({ error: "Invalid credentials" });
-        }
+      const user = await User.findByEmail(email);
+      if (!user) return res.status(404).json({ error: "User not found" });
+  
+      if (compareSync(password, user.password)) {
+        // Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+        // Save OTP and user info in session
+        req.session.otp = otp;
+        req.session.otpUser = user;
+        req.session.otpExpires = Date.now() + 5 * 60 * 1000; // 5 mins
+  
+        await sendOTP(user.email, otp); // Send OTP via email
+  
+        return res.redirect("/user/verify-otp");
+      } else {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
     } catch (error) {
-        console.error("Login Error:", error);
-        res.status(500).json({ error: "Internal server error" });
+      console.error("Login Error:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-},
+  },
+
+  verifyOtpPage: function (req, res) {
+    res.render("user/otp_verify");
+  },
+
+  verifyOtp: function (req, res) {
+    const { otp } = req.body;
+    const { otpUser, otpExpires, otp: sessionOtp } = req.session;
+  
+    if (!otpUser || Date.now() > otpExpires) {
+      return res.status(400).json({ error: "OTP expired. Please login again." });
+    }
+  
+    if (otp === sessionOtp) {
+      const token = jwt.sign({ id: otpUser.id, email: otpUser.email }, JWT_SECRET);
+      res.cookie("token", token, { httpOnly: true });
+  
+      // Cleanup session
+      delete req.session.otp;
+      delete req.session.otpUser;
+      delete req.session.otpExpires;
+  
+      return res.redirect("/user/index");
+    } else {
+      return res.status(401).json({ error: "Invalid OTP" });
+    }
+  },
+  
+
+  
 
 
   getBookDetails: function (req, res) {

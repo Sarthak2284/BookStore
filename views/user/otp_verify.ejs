@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Verify OTP - BookVerse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to right, #f4e3cf, #d1c4e9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Use min-height for better responsiveness */
+            margin: 0;
+            padding: 20px; /* Add padding to the body */
+        }
+
+        .otp-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            max-width: 520px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-sizing: border-box; /* Include padding and border in width/height */
+        }
+
+        .otp-container h2 {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            color: #34495e;
+            font-weight: 700;
+        }
+
+        .otp-input-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap; /* Allow inputs to wrap on smaller screens */
+            gap: 0.5rem; /* Use gap for consistent spacing */
+        }
+
+        .otp-input-box {
+            width: 48px;
+            height: 48px;
+            padding: 0.8rem;
+            font-size: 1.2rem;
+            border: 1px solid #bdc3c7;
+            border-radius: 8px;
+            text-align: center;
+            transition: 0.3s border-color, 0.3s box-shadow;
+            appearance: textfield;
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+            box-sizing: border-box; /* Include padding and border in width/height */
+        }
+
+        .otp-input-box:focus {
+            border-color: #8e44ad;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .otp-input-box::-webkit-inner-spin-button,
+        .otp-input-box::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .otp-container button {
+            background-color: #8e44ad;
+            color: #fff;
+            padding: 1rem 2.2rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            box-sizing: border-box; /* Include padding and border in width/height */
+        }
+
+        .otp-container button:hover {
+            background-color: #7a2d91;
+            transform: translateY(-2px);
+        }
+
+        .otp-container button:active {
+            transform: translateY(0);
+        }
+
+        .note {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .otp-container {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 576px) {
+            .otp-container {
+                padding: 2rem; /* Adjust padding for smaller screens */
+            }
+            .otp-container h2 {
+                font-size: 1.8rem; /* Adjust heading size for smaller screens */
+            }
+            .otp-input-box {
+                width: 40px; /* Adjust input box size for smaller screens */
+                height: 40px;
+                font-size: 1rem; /* Adjust font size for smaller screens */
+                padding: 0.6rem;
+            }
+            .otp-container button {
+                font-size: 1rem; /* Adjust button font size for smaller screens */
+                padding: 0.8rem 1.8rem; /* Adjust button padding */
+            }
+            .note {
+                font-size: 0.85rem; /* Adjust note font size */
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const otpInputs = document.querySelectorAll('.otp-input-box');
+
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    // Restrict input to a single digit
+                    if (value.length > 1) {
+                        e.target.value = value.slice(0, 1);
+                    }
+
+                    if (value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            // Function to combine OTP digits
+            function getOTP() {
+                let otp = '';
+                otpInputs.forEach(input => {
+                    otp += input.value;
+                });
+                return otp;
+            }
+
+            // Intercept form submission to combine OTP before submission
+            const form = document.querySelector('form'); // Ensure you have a form element
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault(); // Prevent default form submission
+
+                    const otp = getOTP();
+                    // console.log('Final OTP:', otp); // For debugging
+                    // You would typically send this OTP to your server for verification
+                    //   via an AJAX request or by adding it to a hidden input field.
+
+                    // Here's how you might add it to a hidden input (if you have one)
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'otp'; // Important: Name it 'otp' to match your server-side expectation
+                    hiddenInput.value = otp;
+                    form.appendChild(hiddenInput);
+                    form.submit()
+
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="otp-container">
+        <h2>Verify OTP</h2>
+        <form method="POST" action="/user/verify-otp">
+            <div class="otp-input-wrapper">
+                <input type="text" class="otp-input-box" maxlength="1" required inputmode="numeric" pattern="\d*">
+                <input type="text" class="otp-input-box" maxlength="1" required inputmode="numeric" pattern="\d*">
+                <input type="text" class="otp-input-box" maxlength="1" required inputmode="numeric" pattern="\d*">
+                <input type="text" class="otp-input-box" maxlength="1" required inputmode="numeric" pattern="\d*">
+                <input type="text" class="otp-input-box" maxlength="1" required inputmode="numeric" pattern="\d*">
+                <input type="text" class="otp-input-box" maxlength="1" required inputmode="numeric" pattern="\d*">
+            </div>
+            <button type="submit">Verify</button>
+        </form>
+        <p class="note">Check your email for the OTP. It’s valid for 5 minutes.</p>
+    </div>
+</body>
+</html>
